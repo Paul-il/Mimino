@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Заказ на столик №{{ table.table_id }}{% endblock %}
+
+{% block content %}
+  <h1 style="color: white;">Заказ на столик №{{ table.table_id }}</h1>
+
+  {% if table.is_ordered %}
+    <p class="text-danger" style="color: white;">у данного стола приняли заказ.</p>
+    <p style="color: white;">Дата и время заказа: {{ table.order_time }}</p>
+  {% endif %}
+
+  <form method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Показать заказ" class="btn btn-primary">
+  </form>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Ask Where{% endblock %}
+
+{% block content %}
+  <div class="container text-center my-6">
+    <h1 class="mb-6" style="color: white; font-size: 32px;">Какие действия?</h1>
+    <div class="btn-group btn-group-lg">
+      <a href="{% url 'tables' %}" class="btn btn-primary mx-3">Столы</a>
+      <a href="{% url 'delivery_app:check_delivery_number' %}" class="btn btn-primary mx-3">Доставка</a>
+      <a href="{% url 'pickup_app:pickup_create' %}" class="btn btn-primary mx-3">Самовывоз</a>
+    </div>
+  </div>
+{% endblock %}

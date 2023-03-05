@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %} {% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login-form.css' %}">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org/dist/htmx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+          <a class="navbar-brand" href="{% url 'ask_where' %}">Mimino</a>
+          
+          
+          {% if user.is_authenticated %}
+
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'bookings' %}">Забронированные Столы.</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'tables'  %}">Столы.</a>
+              </li>
+
+            {% if delivery_phone_number %}
+              <span class="navbar-text mx-auto">Номер Доставки:
+                <a href="{% url 'delivery_app:delivery_cart' delivery_phone_number=delivery_phone_number %}">  {{ delivery_phone_number }}</a>
+                  
+              </span>
+
+              {% if name %}
+                  <span class="navbar-text mx-auto">
+                      Самовывоз Имя: {{ name }}
+                  </span>
+              {% endif %}
+          {% endif %}
+
+            {% if phone_number %}
+              <span class="navbar-text mx-auto">Самовывоз Номер: 
+                <a href="{% url 'pickup_app:pickup_cart' phone_number=phone_number %}"> {{ phone_number }}</a>
+              </span>
+
+          {% endif %}
+          </ul>
+          
+
+          
+          <ul class="navbar-nav">
+            
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="user-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ user.first_name }}
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="user-dropdown">
+                        <a class="dropdown-item" href="#">Настройки</a>
+                        <div class="dropdown-divider"></div>
+                        <form action="{% url 'logout' %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="dropdown-item">Выход из системы</button>
+                        </form>
+                    </div>
+                    </li>
+                </ul>
+            {% endif %}
+          </ul>
+        </div>
+      </nav>
+    <div class="container mt-5">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-success" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+      {% block content %}
+      {% endblock %}
+    </div>
+  </body>
+</html>

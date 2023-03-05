@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load custom_tags %}
+
+{% block title %}Информация о заказе{% endblock %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
+{% block content %}
+<div class="container">
+  <h1 class="my-4" style="color: white;">Информация о заказе</h1>
+  <p style="color: white; font-size: 20px;">Номер Стол: {{ order.table.table_id }}</p>
+  <table class="table">
+    <thead>
+        <tr>
+            <th scope="col" style="color: white; font-size: 26px;">Название</th>
+            <th scope="col" style="color: white; font-size: 26px;">Количество</th>
+            <th scope="col" style="color: white; font-size: 26px;">Цена</th>
+            <th scope="col" style="color: white; font-size: 26px;">Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {% csrf_token %}
+        {% for order_item in order.order_items.all %}
+        <tr>
+            <td style="color: rgb(231, 235, 5);">{{ order_item.product.product_name_rus }}</td>
+            <td id="order-item-{{ order_item.id }}-quantity" style="color: white;" hx-get="{% url 'get_order_item_quantity' order.id order_item.id %}">{{ order_item.quantity }}</td>
+            <td style="color: rgb(255, 255, 255);">{{ order_item.product.product_price }}₪</td>
+            <td>
+                <button class="btn1 btn-primary btn-sm" hx-get="{% url 'increase_product_in_order' order.id order_item.id %}" hx-trigger="click" hx-swap="innerHTML:#total-price">Добавить</button>
+                <button class="btn1 btn-danger btn-sm" hx-get="{% url 'decrease_product_from_order' order.id order_item.id %}" hx-trigger="click" hx-swap="innerHTML:#total-price">Убрать</button>
+                <td>
+                    <button class="btn1 btn-danger btn-sm"
+                        hx-delete="{% url 'delete_product_from_order' order.id order_item.id %}"
+                        hx-trigger="click" 
+                        hx-swap="innerHTML:#total-price"
+                        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>Удалить</button>
+
+                </td>
+            </td>              
+        </tr>
+        {% endfor %}
+    </tbody>
+    
+</table>
+
+    <p style="color: white;">Общая сумма: <span id="total-price" >{{ total_price }}</span>₪</p>
+    <p style="color: white;">Время заказа: {{ order.created_at }}</p>
+    
+
+    <label class="form-group d-flex" style="color: rgb(238, 4, 4); font-size: 26px;">Метод Оплаты:</label>
+<form id="payment-form" method="post" hx-post="{% url 'generate_pdf' order.id %}" hx-swap="outerHTML">
+    {% csrf_token %}
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="payment_method" id="cash" value="מזומן">
+        <label class="form-check-label mr-3" for="cash" style="color: rgb(238, 4, 4);">
+            Наличные
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="payment_method" id="credit_card" value="כרטיס אשראי">
+        <label class="form-check-label mr-3" for="credit_card" style="color: rgb(238, 4, 4);">
+            Кредитная карта
+        </label>
+    </div>
+    <div class="d-flex justify-content-between">
+        <form hx-post="{% url 'pay_order' order.id %}" method="post">
+          {% csrf_token %}
+          <button id="pay-button" name="pay-button" value="aaa" type="submit" class="btn2 btn-primary2 mr-3" disabled>Счет Оплачен.</button>
+        </form>
+        <form hx-post="{% url 'generate_pdf' order.id %}" hx-post-then-redirect="{% url 'tables' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" id="print-bill" name="print-bill" class="btn-primary2" value="Распечатать Счет.">Распечатать Счет.</button>
+          </form>
+      </div>
+      <div class="my-4">
+        <a href="{% url 'menu' table_id=order.table_id category='Salads' %}" class="btn btn-secondary">Назад</a>
+
+
+    </div>
+</form>
+
+
+<script src="https://unpkg.com/htmx.org/dist/htmx.min.js"></script>
+
+<script>
+    var cashInput = document.getElementById('cash');
+    var creditCardInput = document.getElementById('credit_card');
+    var payButton = document.getElementById('pay-button');
+
+    cashInput.addEventListener('change', handlePaymentMethodChange);
+    creditCardInput.addEventListener('change', handlePaymentMethodChange);
+
+    function handlePaymentMethodChange() {
+        payButton.removeAttribute('disabled');
+    }
+
+    payButton.addEventListener('click', function(event) {
+        var paymentMethod = document.querySelector('input[name="payment_method"]:checked');
+        if (!paymentMethod) {
+            alert('Выберите способ оплаты!');
+            event.preventDefault();
+        }
+    });
+</script>
+
+        <script>
+            function increase_product_in_order(order_id, order_item_id) {
+                var url = "/order/" + order_id + "/add/" + order_item_id + "/";
+                fetch(url).then(response => response.json()).then(data => {
+                    if (data.total_price !== null) {
+                        document.querySelector("#total-price").innerHTML = data.total_price + "₪";
+                        document.querySelector("#order-item-" + order_item_id + "-quantity").innerHTML = data.quantity;
+                    }
+                });
+            }
+
+        </script>
+        <script>
+            function decrease_product_from_order(order_id, order_item_id) {
+                var url = "/order/" + order_id + "/remove/" + order_item_id + "/";
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.total_price !== null) {
+                            document.querySelector("#total-price").innerHTML = data.total_price + "₪";
+                            document.querySelector("#order-item-" + order_item_id + "-quantity").innerHTML = data.quantity;
+                        }
+                        if (data.removed) {
+                            document.querySelector("#order-item-" + order_item_id).remove();
+                        }
+                    });
+            }
+
+            </script>
+                
+        {% endblock %}
+        

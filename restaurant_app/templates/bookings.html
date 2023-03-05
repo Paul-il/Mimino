@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Bookings{% endblock %}
+
+{% block content %}
+<table class="table">
+  <thead>
+    <tr>
+      <th style="color: white; font-size: 15px;">Кто делал бронь</th>
+      <th style="color: white; font-size: 15px;">Номер стола</th>
+      <th style="color: white; font-size: 15px;">Дата бронирования</th>
+      <th style="color: white; font-size: 15px;">Время бронирования</th>
+      <th style="color: white; font-size: 15px;">Количество человек</th>
+      <th style="color: white; font-size: 15px;">Пришли ли гости</th>
+      <th style="color: white; font-size: 15px;">Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for booking in bookings %}
+    {% if not booking.is_deleted %}
+        <tr>
+            <td style="color: white; font-size: 15px;">{{ booking.user }}</td>
+            <td style="color: white; font-size: 15px;">{{ booking.table.table_id }}</td>
+            <td style="color: white; font-size: 15px;">{{ booking.reserved_date }}</td>
+            <td style="color: white; font-size: 15px;">{{ booking.reserved_time }}</td>
+            <td style="color: white; font-size: 15px;">{{ booking.num_of_people }}</td>
+            <td>
+                <form method="POST" action="{% url 'guests_here' booking.id %}">
+                    {% csrf_token %}
+                                         
+                    <button type="submit" class="btn btn-success btn-booking">
+                      {% if booking.are_guests_here %}Гости не пришли{% else %}Гости пришли{% endif %}
+                    </button>
+                                       
+                </form>
+            </td>
+            <td style="color: white; font-size: 15px;">{{ booking.description }}</td>
+        </tr>
+    {% endif %}
+{% endfor %}
+
+  </tbody>
+</table>
+
+{% endblock %}

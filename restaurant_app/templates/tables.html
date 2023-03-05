@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Tables{% endblock %}
+
+{% load static %}
+
+{% block content %}
+  <div class="row">
+    {% for table in tables %}
+    <div class="col-md-3 mb-3">
+      <div class="card rounded-lg">
+        {% if table.active_order %}
+            <img src="{% static 'img/active_order.jpg' %}" class="card-img-top">
+            <a href="{% url 'menu' table_id=table.table_id category='Salads' %}" class="btn btn-primary">Добавить в Заказ.</a>
+            <a href="{% url 'order_detail' order_id=table.orders.last.id %}" class="btn btn-primary">Просмотреть заказ</a>
+
+        {% elif table.orders.last %}
+              <a href="{% url 'order_detail' order_id=table.orders.last.id %}" class="btn btn-primary">Просмотреть заказ</a>
+
+
+            
+              <div class="card-body">          
+                <p class="card-text">Сумма заказа: {{ table.active_order.total_price }}</p>
+                <p class="card-text">Количество гостей: {{ table.active_order.num_guests }}</p>
+                <p class="card-text">Время начала заказа: {{ table.active_order.created_at }}</p>
+            </div>     
+        {% else %}
+        
+            <img src="{% static 'img/empty_table.jpg' %}" class="card-img-top" alt="Стол {{ table.table_id }}">
+            <a href="{% url 'menu' table_id=table.table_id category='Salads' %}" class="btn btn-primary">Начать Заказ.</a>
+        {% endif %}
+
+            
+
+        <div class="card-body">
+          <h5 class="card-title">Стол {{ table.table_id }}</h5>
+          <p class="card-text">{{ table.description }}</p>
+        </div>
+        <div class="card-footer">
+          {% if table.is_booked and table.are_guests_here %}
+            <p class="card-text">Забронирован на {{ table.reserved_date }} в {{ table.reserved_time }} для {{ table.num_of_people }} человек</p>
+            {% if table.is_confirmed %}
+              <p class="card-text">Гости прибыли</p>
+            {% else %}
+              <a href="#" class="btn btn-primary">Подтвердить прибытие гостей</a>
+            {% endif %}
+          {% elif table.is_ordered %}
+            {% if table.active_order %}
+            <a href="{% url 'table_order' table_id=table.table_id order_id=active_order.id %}" class="btn btn-primary">Добавить в заказ.</a>
+            
+              <a href="{% url 'order_detail' order_id=table.active_order.id %}" class="btn btn-primary">Информация о заказе.</a>
+            {% else %}
+              <a href="{% url 'menu' table_id=table.table_id category='Salads' %}" class="btn btn-primary">Начать Заказ.</a>
+            {% endif %}
+            <p class="card-text">Время первого Заказа. {{ table.order_time }}</p>
+          {% else %}
+          <!--<a href="{% url 'book_table' table_id=table.table_id %}" class="btn btn-primary" disabled>Забронировать.</a>-->
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% endblock %}

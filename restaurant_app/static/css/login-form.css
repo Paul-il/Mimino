@@ -1,0 +1,78 @@
+.login-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  font-size: 36px;
+  text-align: center;
+  margin-top: 50px;
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+input.form-control {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+input.form-control:focus {
+  outline: none;
+  border-color: #1a73e8;
+}
+
+button.btn {
+  display: block;
+  margin: 20px auto 0;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button.btn-primary {
+  background-color: #1a73e8;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+}
+
+button.btn-primary:hover {
+  background-color: #0d47a1;
+}
+
+button.btn-danger {
+  background-color: #1a73e8;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+}
+
+button.btn-danger:hover {
+  background-color: #0d47a1;
+}
+/* Adjust input fields */
+input[type="text"],
+input[type="password"] {
+  height: 30px;
+  padding: 5px;
+  font-size: 14px;
+}

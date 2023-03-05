@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Меню{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4" style="color: white;">Меню</h1>
+
+    <ul class="nav nav-tabs mb-4">
+        {% if table %}
+        <li class="nav-item">
+            <a class="nav-link {% if category == 'Salads' %}active{% endif %}" href="{% url 'menu' table_id=table.table_id category='Salads' %}?order_id={{ order_id }}&category=Salads">Салаты</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if category == 'first_dishes' %}active{% endif %}" href="{% url 'menu' table_id=table.table_id category='Salads'%}?order_id={{ order_id }}&category=first_dishes">Закуски</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if category == 'meat_dishes' %}active{% endif %}" href="{% url 'menu' table_id=table.table_id category='Salads'%}?order_id={{ order_id }}&category=meat_dishes">Мясные блюда</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if category == 'bakery' %}active{% endif %}" href="{% url 'menu' table_id=table.table_id category='Salads'%}?order_id={{ order_id }}&category=bakery">Выпечка</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if category == 'khinkali' %}active{% endif %}" href="{% url 'menu' table_id=table.table_id category='Salads'%}?order_id={{ order_id }}&category=khinkali">Хинкали</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if category == 'khachapuri' %}active{% endif %}" href="{% url 'menu' table_id=table.table_id category='Salads'%}?order_id={{ order_id }}&category=khachapuri">Хачапури</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if category == 'garnish' %}active{% endif %}" href="{% url 'menu' table_id=table.table_id category='Salads'%}?order_id={{ order_id }}&category=garnish">Гарниры</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if category == 'grill_meat' %}active{% endif %}" href="{% url 'menu' table_id=table.table_id category='Salads'%}?order_id={{ order_id }}&category=grill_meat">Мясо на гриле</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if category == 'soups' %}active{% endif %}" href="{% url 'menu' table_id=table.table_id category='Salads'%}?order_id={{ order_id }}&category=soups">Супы</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if category == 'dessert' %}active{% endif %}" href="{% url 'menu' table_id=table.table_id category='Salads'%}?order_id={{ order_id }}&category=dessert">Десерты</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if category == 'drinks' %}active{% endif %}" href="{% url 'menu' table_id=table.table_id category='Salads'%}?order_id={{ order_id }}&category=drinks">Напитки</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if category == 'sales' %}active{% endif %}" href="{% url 'menu' table_id=table.table_id category='Salads'%}?order_id={{ order_id }}&category=sales">Сэты</a>
+        </li>
+        {% endif %}
+    </ul>
+
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-3 mb-3">
+            <div class="card">
+                <img src="{{ product.product_img.url }}" class="card-img-top" alt="{{ product.product_name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.product_name_rus }}</h5>
+                    <p class="card-text">{{ product.product_price }}₪</p>
+                    <form action="{% if table %}{% url 'add_to_cart' table_id=table.table_id %}{% endif %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        {{ product_quantity_form.as_p }}
+                        {% if table.active_orders.exists %}
+                        <input type="hidden" name="order_pk" value="{{ table.active_orders.first.pk }}">
+                        {% endif %}
+                    
+                        <button type="submit" class="btn btn-primary">Добавить в корзину</button>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Забронировать стол{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1 style="color: white; font-size: 32px;">Забронировать стол</h1>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="date" style="color: white; font-size: 26px;">Дата</label>
+        <input type="date" class="form-control" id="date" name="date" required>
+      </div>
+      <div class="form-group">
+        <label for="time" style="color: white; font-size: 26px;">Время</label>
+        <input type="time" class="form-control" id="time" name="time" required>
+      </div>
+      <div class="form-group">
+        <label for="num_of_people" style="color: white; font-size: 26px;">Количество людей</label>
+        <input type="number" class="form-control" id="num_of_people" name="num_of_people" required>
+      </div>
+      <div class="form-group">
+        <label for="description" style="color: white; font-size: 26px;">Описание</label>
+        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Забронировать</button>
+      <input type="hidden" name="user" value="{{ request.user.pk }}">   
+    </form>
+  </div>
+{% endblock %}
