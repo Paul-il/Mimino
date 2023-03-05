@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Новый Заказчик.{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <h1 class="mb-4" style="color: white;">Новый Заказчик.</h1>
+  <form method="post" action="{% url 'delivery_app:add_delivery_customer' delivery_phone_number=delivery_phone_number %}" class="form-control-equal">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="delivery_phone_number" style="color: white;">Номер телефона</label>
+          <input type="tel" id="delivery_phone_number" name="delivery_phone_number" class="form-control form-control-lg" value="{{ delivery_phone_number }}" readonly>
+        </div>
+        <div class="form-group">
+          <label for="name" style="color: white;">Имя</label>
+          <input type="text" id="name" name="name" class="form-control form-control-lg" required>
+        </div>
+        <div class="form-group">
+          <label for="{{ form.city.id_for_label }}" style="color: white;">Город</label>
+          {{ form.city }}
+        </div>
+        
+        <div class="form-group">
+          <label for="street" style="color: white;">Улица</label>
+          <input type="text" id="street" name="street" class="form-control form-control-lg" required>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="house_number" style="color: white;">Номер дома</label>
+          <input type="text" id="house_number" name="house_number" class="form-control form-control-lg" required>
+        </div>
+        <div class="form-group">
+          <label for="floor" style="color: white;">Этаж</label>
+          <input type="text" id="floor" name="floor" class="form-control form-control-lg" required>
+        </div>
+        <div class="form-group">
+          <label for="apartment_number" style="color: white;">Номер квартиры</label>
+          <input type="text" id="apartment_number" name="apartment_number" class="form-control form-control-lg" required>
+        </div>
+        <div class="form-group">
+          <label for="intercom_code" style="color: white;">Код домофона(Если есть таковой)</label>
+          <input type="text" id="intercom_code" name="intercom_code" class="form-control form-control-lg">
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Создать Заказчика.</button>
+  </form>
+{% endblock %}

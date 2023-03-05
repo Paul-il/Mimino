@@ -1,0 +1,81 @@
+<!doctype html>
+{% load custom_tags %}
+<html dir="rtl">
+<head>
+    <style>
+        h1 {
+        text-align: center;
+        }
+        p {
+        text-align: center;
+        }
+        th, td {
+        text-align: center;
+        }
+
+    </style>
+  <meta charset="utf-8">
+  <title>MIMINO georgian khachapuri</title>
+  <div stryle="text-align: center">
+    <h1>MIMINO georgian khachapuri</h1>
+    <p>--------------------------------------------------------------------------------------------------------------------------------</p>
+    <p>דרך יפו 110,חיפה</p>
+    <p>טלפון: 04-8113399</p>
+    <p>ע.מ: 515695377</p>
+    <p>שם לקוח: לקוח כללי</p>
+    <p>--------------------------------------------------------------------------------------------------------------------------------</p>
+  </div>  
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
+  
+</head>
+<body>
+
+  <p>מס טלפון: {{ delivery_phone_number }}</p>
+  <p>שם לקוח: {{ customer_name }}</p>
+  <p>עיר: {{ city }}</p>
+  <p>רחוב: {{ delivery_street }}</p>
+  <p>מס רחוב: {{ delivery_house_number }} </p>
+  <p>קומה: {{ delivery_floor }} </p>
+  <p>מס דירה: {{ delivery_apartment_number }} </p>
+  <p>קוד כניסה לבניין: {{ delivery_intercom_code }} </p>
+  <p>--------------------------------------------------------------------------------------------------------------------------------</p>
+
+  <h4>פריטי הזמנה:</h4>
+  <table>
+    <thead>
+      <tr>
+        <th>מחיר</th>
+        <th>כמות</th>
+        <th>מוצר</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in cart_items %}
+        <tr>
+          <td>{{ item.product.product_price }}₪</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.product_id|get_product_name_heb }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <style>
+    table {
+      width: 100%;
+      
+    }
+    
+    th, td {
+      padding: 8px;
+      text-align: right;
+      
+    }
+    </style>
+    
+
+  <p>סה"כ: {{ total_price }}₪ </p>
+  <p style="font-size: 12px; "> לא כולל שירות</p>
+  <p>תודה רבה, תבואו שוב</p>
+  <!--<p>אמצעי תשלום: order.created_at{{ payment_method }}</p>-->
+</body>
+</html>

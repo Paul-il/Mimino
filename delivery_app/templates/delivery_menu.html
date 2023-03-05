@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Меню на Доставку{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4" style="color: white;">Меню на Доставку №{{ delivery_phone_number }}</h1>
+
+    <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+            <a href="{% url 'delivery_app:delivery_menu' delivery_phone_number=delivery_phone_number category='Salads' %}" class="nav-link{% if category == 'Salads' %} active{% endif %}">Салаты</a>
+
+        </li>
+    </ul>
+
+    <div id="products-container" class="row" hx-target="#products-container">
+        {% for product in products %}
+        <div class="col-md-3 mb-3">
+            <div class="card">
+                <img src="{{ product.product_img.url }}" class="card-img-top" alt="{{ product.product_name_rus }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.product_name_rus }}</h5>
+                    <p class="card-text">{{ product.product_price }}₪</p>
+                    <form action="{% url 'delivery_app:delivery_add_to_cart' delivery_phone_number=delivery_phone_number %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        {{ product_quantity_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Добавить в корзину</button>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'delivery_app:delivery_cart' delivery_phone_number=delivery_phone_number %}" class="btn btn-primary">Корзина</a>
+
+        </a>
+    </div>
+    
+</div>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Подтвердить Заказчика.{% endblock %}
+
+{% block content %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <h1 class="mb-4" style="color: white;">Подтвердить Заказчика.</h1>
+  <form method="post" action="{% url 'delivery_app:add_delivery_customer' delivery_phone_number=delivery_phone_number %}"  class="form-control-equal">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="delivery_phone_number" style="color: white;">Номер телефона</label>
+          <input type="tel" id="delivery_phone_number" name="delivery_phone_number" class="form-control form-control-lg" value="{{ customer.delivery_phone_number }}" readonly>
+      </div>      
+        <div class="form-group">
+          <label for="name" style="color: white;">Имя</label>
+          <input type="text" id="name" name="name" class="form-control form-control-lg"  value="{{ customer.name }}" readonly>
+        </div>
+        <div class="form-group">
+          <label for="city" style="color: white;">Город</label>
+          <input type="text" id="city" name="city" class="form-control form-control-lg"  value="{{ customer.city }}" readonly>
+        </div>
+        <div class="form-group">
+          <label for="street" style="color: white;">Улица</label>
+          <input type="text" id="street" name="street" class="form-control form-control-lg"  value="{{ customer.street }}" readonly>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="house_number" style="color: white;">Номер дома</label>
+          <input type="text" id="house_number" name="house_number" class="form-control form-control-lg"  value="{{ customer.house_number }}" readonly>
+        </div>
+        <div class="form-group">
+          <label for="floor" style="color: white;">Этаж</label>
+          <input type="text" id="floor" name="floor" class="form-control form-control-lg" value="{{ customer.floor }}" readonly>
+        </div>
+        <div class="form-group">
+          <label for="apartment_number" style="color: white;">Номер квартиры</label>
+          <input type="text" id="apartment_number" name="apartment_number" class="form-control form-control-lg" value="{{ customer.apartment_number }}" readonly>
+        </div>
+        <div class="form-group">
+          <label for="intercom_code" style="color: white;">Код домофона(Если есть таковой)</label>
+          <input type="text" id="intercom_code" name="intercom_code" class="form-control form-control-lg" value="{{ customer.intercom_code }}" readonly>
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Подтвердить Заказчика.</button>
+  </form>
+{% endblock %}
+{% block script %}
+
+<script>
+  // после подтверждения заказчика, переходим на страницу меню
+  document.querySelector('#check_delivery_customer_form').addEventListener('submit', (event) => {
+    event.preventDefault();
+    fetch(event.target.action, {
+      method: event.target.method,
+      body: new FormData(event.target),
+      headers: {
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+      }
+    }).then(() => {
+      window.location.href = "{% url 'delivery_menu' %}";
+    });
+  });
+</script>
+
+
+{% endblock %}
