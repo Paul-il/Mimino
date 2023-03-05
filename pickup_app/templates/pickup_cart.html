@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load custom_tags %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+
+
+{% block title %}Информация о заказе на Самовывоз{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="my-4" style="color: white;">Информация о заказе на Самовывоз</h1>
+  <p style="color: white; font-size: 20px;">Номер Телефона: {{ pickup_order.phone }}</p>
+  <table class="table">
+    <thead>
+        <tr>
+            <th scope="col" style="color: white; font-size: 26px;">Название</th>
+            <th scope="col" style="color: white; font-size: 26px;">Количество</th>
+            <th scope="col" style="color: white; font-size: 26px;">Цена</th>
+            <th scope="col" style="color: white; font-size: 26px;">Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in cart_items %}
+        <tr>
+            <td style="color: rgb(231, 235, 5);">{{ item.product.product_name_rus }}</td>
+            <td id="order-item-{{ item.id }}-quantity" style="color: white;">{{ item.quantity }}</td>
+            <td style="color: rgb(255, 255, 255);">{{ item.product.product_price }}₪</td>
+            <td>
+              <button class="btn1 btn-primary btn-sm" hx-get="{% url 'pickup_app:pickup_increase_product' pickup_order.phone item.product.id %}" hx-trigger="click" hx-swap="innerHTML:#total-price">Добавить</button>
+              <button class="btn1 btn-danger btn-sm" hx-get="{% url 'pickup_app:pickup_decrease_product' pickup_order.phone item.product.id %}" hx-trigger="click" hx-swap="innerHTML:#total-price">Убрать</button>
+              <form method="POST" action="{% url 'pickup_app:pickup_remove_product' pickup_order.phone item.product.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                <td><button type="submit" class="btn1 btn-danger btn-sm" hx-swap="innerHTML:#total-price">Удалить</button></td>
+              </form>
+              
+            </td>
+          </tr>
+          
+        
+        {% endfor %}
+
+    </tbody>
+    
+</table>
+
+<p style="color: white;">Общая сумма: {{ cart|pickup_total_price }}₪</p>
+    
+
+<label class="form-group d-flex" style="color: rgb(238, 4, 4); font-size: 26px;">Метод Оплаты:</label>
+<form id="payment-form" method="post" hx-post="{% url 'pickup_app:pickup_generate_pdf' phone_number=pickup_order.phone order_id=pickup_order.id %}" hx-swap="outerHTML">
+    {% csrf_token %}
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="payment_method" id="cash" value="מזומן">
+        <label class="form-check-label mr-3" for="cash" style="color: rgb(238, 4, 4);">
+            Наличные
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="payment_method" id="credit_card" value="כרטיס אשראי">
+        <label class="form-check-label mr-3" for="credit_card" style="color: rgb(238, 4, 4);">
+            Кредитная карта
+        </label>
+    </div>
+    <div class="d-flex justify-content-between">
+        <form hx-post="{% url 'pay_order' pickup_order.id %}" method="post">
+          {% csrf_token %}
+          <button id="pay-button" name="pay-button" value="aaa" type="submit" class="btn2 btn-primary2 mr-3" disabled>Счет Оплачен.</button>
+        </form>
+        <form hx-post="{% url 'pickup_app:pickup_generate_pdf' phone_number=pickup_order.phone order_id=pickup_order.id %}"method="post">
+            {% csrf_token %}
+            <button type="submit" id="print-bill" name="print-bill" class="btn-primary2" value="Распечатать Счет.">Распечатать Счет.</button>
+          </form>
+      </div>
+    <div class="my-4">
+        <a href="{% url 'pickup_app:pickup_menu' phone_number=pickup_order.phone category='Salads' %}" class="btn btn-secondary">Назад</a>
+
+    </div>
+</div>
+<script src="https://unpkg.com/htmx.org/dist/htmx.min.js"></script>
+
+<script>
+    var cashInput = document.getElementById('cash');
+    var creditCardInput = document.getElementById('credit_card');
+    var payButton = document.getElementById('pay-button');
+
+    cashInput.addEventListener('change', handlePaymentMethodChange);
+    creditCardInput.addEventListener('change', handlePaymentMethodChange);
+
+    function handlePaymentMethodChange() {
+        payButton.removeAttribute('disabled');
+    }
+
+    payButton.addEventListener('click', function(event) {
+        var paymentMethod = document.querySelector('input[name="payment_method"]:checked');
+        if (!paymentMethod) {
+            alert('Выберите способ оплаты!');
+            event.preventDefault();
+        }
+    });
+    </script>
+{% endblock %}

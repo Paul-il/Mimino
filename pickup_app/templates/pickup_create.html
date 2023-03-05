@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Создать заказ на самовывоз{% endblock %}
+
+{% block content %}
+<h1 class="mb-4" style="color: white;">Создать заказ на самовывоз</h1>
+<form method="POST" action="{% url 'pickup_app:pickup_create' %}">
+    {% csrf_token %}
+    <input type="hidden" name="phone_number" value="{{ phone_number }}">
+    
+    <div style="color:white;">
+        {{ form.as_p }}
+    </div> 
+
+    <button type="submit" class="btn btn-primary">Создать заказ</button>
+</form>
+{% endblock %}

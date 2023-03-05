@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Меню{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4" style="color: white;">Меню на Самовывоз №{{ phone_number }}</h1>
+
+    <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+            <a href="{% url 'pickup_app:pickup_menu' phone_number=phone_number category='Salads' %}" class="nav-link{% if category == 'Salads' %} active{% endif %}">Салаты</a>
+        </li>
+    </ul>
+
+    <div id="products-container" class="row" hx-target="#products-container">
+        {% for product in products %}
+        <div class="col-md-3 mb-3">
+            <div class="card">
+                <img src="{{ product.product_img.url }}" class="card-img-top" alt="{{ product.product_name_rus }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.product_name_rus }}</h5>
+                    <p class="card-text">{{ product.product_price }}₪</p>
+                    <form action="{% url 'pickup_app:pickup_add_to_cart' phone_number=phone_number product_id=product.id %}" method="POST">
+                        {% csrf_token %}
+                        {{ product_quantity_form.as_p }}
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        <input type="hidden" name="user_phone" value="{{ request.user.phone }}">
+                        <button type="submit" class="btn btn-primary">Добавить в корзину</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="my-4">
+        <a href="{% url 'pickup_app:pickup_create' %}" class="btn btn-secondary">Назад</a>
+    </div>
+</div>
+{% endblock %}
