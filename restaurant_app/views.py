@@ -279,15 +279,14 @@ def add_to_cart_view(request, table_id):
 
             # Redirect back to the menu page to prevent the form from being resubmitted
             if table_id:
-                return redirect(reverse('menu', kwargs={'table_id': table_id}))
-            else:
-                return redirect('pickup')
+                return redirect(reverse('menu', kwargs={'table_id': table_id, 'category': 'salads'}))
+
 
     # If the request is not a POST request, redirect back to the menu page
     if table_id:
-        return redirect(reverse('menu', kwargs={'table_id': table_id}))
-    else:
-        return redirect('pickup')
+        return redirect(reverse('menu', kwargs={'table_id': table_id, 'category': 'salads'}))
+
+
 
 ############################ ADD_DELETE ##################################
 
